@@ -3,15 +3,14 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const campsiteRouter = require("./routes/campsiteRouter");
 const promotionRouter = require("./routes/promotionRouter");
 const partnerRouter = require("./routes/partnerRouter");
-
 const mongoose = require("mongoose");
 
+const url = "mongodb://localhost:27017/nucampsite";
 const connect = mongoose.connect(url, {
   useCreateIndex: true,
   useFindAndModify: false,
