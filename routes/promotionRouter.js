@@ -32,10 +32,15 @@ promotionRouter
         .catch(err => next(err));
     }
   )
-  .put(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
-    res.statusCode = 403;
-    res.end("PUT operation not supported on /promotions");
-  })
+  .put(
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res) => {
+      res.statusCode = 403;
+      res.end("PUT operation not supported on /promotions");
+    }
+  )
   .delete(
     cors.corsWithOptions,
     authenticate.verifyUser,
@@ -61,12 +66,17 @@ promotionRouter
       })
       .catch(err => next(err));
   })
-  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
-    res.statusCode = 403;
-    res.end(
-      `POST operation not supported on /promotions/${req.params.promotionId}`
-    );
-  })
+  .post(
+    cors.corsWithOptions,
+    authenticate.verifyUser,
+    authenticate.verifyAdmin,
+    (req, res) => {
+      res.statusCode = 403;
+      res.end(
+        `POST operation not supported on /promotions/${req.params.promotionId}`
+      );
+    }
+  )
   .put(
     cors.corsWithOptions,
     authenticate.verifyUser,
