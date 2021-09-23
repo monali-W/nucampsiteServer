@@ -96,17 +96,13 @@ favoriteRouter
       Favorite.findOne({ user: req.user._id })
         .then(favorite => {
           if (favorite) {
-            req.body.forEach(campsiteId => {
-              if (!favorite.campsites.includes(req.params.campsiteId))
-                favorite.campsites.push(req.params.campsiteId);
-            });
+            if (!favorite.campsites.includes(req.params.campsiteId))
+              favorite.campsites.push(req.params.campsiteId);
+
             favorite
               .save()
+
               .then(favorite => {
-                console.log(
-                  "That campsite is already in the list of favorites! ",
-                  favorite
-                );
                 res.statusCode = 200;
                 res.setHeader("Content-Type", "application/json");
                 res.json(favorite);
@@ -115,7 +111,7 @@ favoriteRouter
           } else {
             Favorite.create({
               user: req.user._id,
-              campsites: req.body
+              campsites: [req.params.campsiteId]
             })
               .then(favorite => {
                 console.log("favorite ", favorite);
@@ -146,12 +142,20 @@ favoriteRouter
 
     (req, res, next) => {
       Favorite.findOne({ user: req.user._id })
-        .then(response => {
-          res.statusCode = 200;
-          res.setHeader("Content-Type", "application/json");
-          res.json(response);
-        })
-        .catch(err => next(err));
+      .then(favorite => {
+        const index = favorite.campsites.indexOf(req.params.campsiteId);
+        if (index > -1) {
+          favorite.campsites.splice(index, 1);
+        }
+        favorite
+          .save()
+          .then(favorite => {
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            res.json(favorite);
+          })
+          .catch(err => next(err));
+      });
     }
   );
 module.exports = favoriteRouter;
